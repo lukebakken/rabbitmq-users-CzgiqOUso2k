@@ -7,18 +7,19 @@ set -e
 
 readonly curdir="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
 
+readonly server_cn='rabbitmq'
 readonly password='CzgiqOUso2k'
 
 readonly certs_root_dir="$curdir/tls-gen/basic"
 readonly certs_result_dir="$certs_root_dir/result"
 readonly ca_cert="$certs_result_dir/ca_certificate.pem"
-readonly client_cert="$certs_result_dir/client_*_certificate.pem"
-readonly client_key="$certs_result_dir/client_*_key.pem"
+readonly client_cert="$certs_result_dir/client_${server_cn}_certificate.pem"
+readonly client_key="$certs_result_dir/client_${server_cn}_key.pem"
 readonly client_pfx="$certs_result_dir/client.pfx"
 
 rm -rf "$curdir"/*.jks "$curdir"/*.pkcs12
 
-(cd "$certs_root_dir" && make "CN=*")
+(cd "$certs_root_dir" && make "CN=rabbitmq")
 
 keytool -genkey -dname "cn=client-truststore" -alias client-truststore -keyalg RSA -keystore "$curdir/client-truststore.pkcs12" -storetype pkcs12 -keypass "$password" -storepass "$password"
 
@@ -33,5 +34,5 @@ keytool -importkeystore -srckeystore "$client_pfx" -srcstoretype pkcs12 -srcstor
 cp -vf "$curdir/"*.pkcs12 "$curdir/producer"
 cp -vf "$curdir/"*.pkcs12 "$curdir/consumer"
 cp -vf "$certs_result_dir/ca_certificate.pem" "$curdir/rmq/certs"
-cp -vf "$certs_result_dir/server_*_certificate.pem" "$curdir/rmq/certs"
-cp -vf "$certs_result_dir/server_*_key.pem" "$curdir/rmq/certs"
+cp -vf "$certs_result_dir/server_${server_cn}_certificate.pem" "$curdir/rmq/certs"
+cp -vf "$certs_result_dir/server_${server_cn}_key.pem" "$curdir/rmq/certs"
