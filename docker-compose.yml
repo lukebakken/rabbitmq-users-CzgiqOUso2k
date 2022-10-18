@@ -7,7 +7,7 @@ networks:
 
 services:
   producer:
-    image: pivotalrabbitmq/perf-test:latest
+    build: producer
     networks:
       - rabbitnet
     command:
@@ -25,7 +25,7 @@ services:
       - rmq
     restart: on-failure
   consumer:
-    image: pivotalrabbitmq/perf-test:latest
+    build: consumer
     networks:
       - rabbitnet
     command:
