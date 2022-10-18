@@ -1,5 +1,7 @@
 loopback_users = none
 
+load_definitions = /etc/rabbitmq/definitions.json
+
 classic_queue.default_version = 2
 
 auth_mechanisms.1 = PLAIN
