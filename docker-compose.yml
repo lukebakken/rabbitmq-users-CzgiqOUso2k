@@ -12,6 +12,7 @@ services:
       - rabbitnet
     command:
       - --uris=amqps://rabbitmq:5671
+      - --sasl-external
       - --servers-startup-timeout=120
       - --rate=1
       - --producers=3
@@ -30,6 +31,7 @@ services:
       - rabbitnet
     command:
       - --uris=amqps://rabbitmq:5671
+      - --sasl-external
       - --servers-startup-timeout=120
       - --rate=1
       - --producers=0
