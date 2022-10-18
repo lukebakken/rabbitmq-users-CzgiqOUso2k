@@ -11,26 +11,37 @@ services:
     networks:
       - rabbitnet
     command:
-      - --uris=amqp://rabbitmq
+      - --uris=amqps://rabbitmq:5671
       - --servers-startup-timeout=120
       - --rate=1
       - --producers=3
       - --consumers=0
       - --confirm=16
-      - --predeclared
-      - --queue=amqp091-go-119
-      - --routing-key=amqp091-go-119
+      - --queue=rabbitmq-users-CzgiqOUso2k
+      - --routing-key=rabbitmq-users-CzgiqOUso2k
       - --flag=persistent
       - --flag=mandatory
     depends_on:
       - rmq
     restart: on-failure
   consumer:
-    build: consumer
+    image: pivotalrabbitmq/perf-test:latest
     networks:
       - rabbitnet
+    command:
+      - --uris=amqps://rabbitmq:5671
+      - --servers-startup-timeout=120
+      - --rate=1
+      - --producers=0
+      - --consumers=3
+      - --confirm=16
+      - --queue=rabbitmq-users-CzgiqOUso2k
+      - --routing-key=rabbitmq-users-CzgiqOUso2k
+      - --flag=persistent
+      - --flag=mandatory
     depends_on:
       - rmq
+    restart: on-failure
   rmq:
     build: rmq
     hostname: rabbitmq
