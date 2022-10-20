@@ -7,21 +7,22 @@ set -u
 
 readonly curdir="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
 
-readonly server_cn="${1:-rabbitmq}"
+readonly server_cn="${1:-*}"
+readonly client_cn="${1:-rabbitmq}"
 readonly password='CzgiqOUso2k'
 
 readonly certs_root_dir="$curdir/tls-gen/basic"
 readonly certs_result_dir="$certs_root_dir/result"
 readonly ca_cert="$certs_result_dir/ca_certificate.pem"
 readonly ca_cert_der="$certs_result_dir/ca_certificate.der"
-readonly client_cert="$certs_result_dir/client_${server_cn}_certificate.pem"
-readonly client_key="$certs_result_dir/client_${server_cn}_key.pem"
+readonly client_cert="$certs_result_dir/client_${client_cn}_certificate.pem"
+readonly client_key="$certs_result_dir/client_${client_cn}_key.pem"
 readonly client_pfx="$certs_result_dir/client.pfx"
 
 git clean -xffd
 git submodule update --init
 
-(cd "$certs_root_dir" && make "CN=$server_cn")
+(cd "$certs_root_dir" && make "CN=$server_cn" && make CN="$client_cn" gen-client)
 
 keytool -genkey -dname "cn=client-truststore" -alias client-truststore -keyalg RSA -keystore "$curdir/client-truststore.pkcs12" -storetype pkcs12 -keypass "$password" -storepass "$password"
 
